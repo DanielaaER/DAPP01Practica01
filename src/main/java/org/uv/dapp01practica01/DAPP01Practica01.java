@@ -82,6 +82,7 @@ public class DAPP01Practica01 {
                 step = false;
             } catch (Exception e) {
                 step = true;
+                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, e);
             }
         } while ((n < 1 || n < 5) || step);
     }
