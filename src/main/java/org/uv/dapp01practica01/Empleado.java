@@ -9,18 +9,28 @@ package org.uv.dapp01practica01;
  * @author Danielaa
  */
 public class Empleado {
+
+    private int id;
     private String nombre;
     private String direccion;
-    private int telefono;
+    private String telefono;
 
-    public Empleado(String nombre, String direccion, int telefono) {
+    public Empleado(String nombre, String direccion, String telefono) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
     }
-    
-    public Empleado(){
-        
+
+    public Empleado() {
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -39,12 +49,12 @@ public class Empleado {
         this.direccion = direccion;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-    
+
 }

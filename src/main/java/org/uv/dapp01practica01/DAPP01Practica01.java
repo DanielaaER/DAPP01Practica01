@@ -3,11 +3,10 @@
  */
 package org.uv.dapp01practica01;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,40 +19,14 @@ public class DAPP01Practica01 {
 
     public static void main(String[] args) {
         try {
-            connection();
+            menu();
         } catch (Exception ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, "Error al ejecutar el programa", ex);
 
         }
     }
 
-    public static void connection() {
-        Connection con = null;
-
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
-            menu(con);
-
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, "Se conecto");
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-    }
-
-    public static void menu(Connection con) {
+    public static void menu() {
         Scanner scan = new Scanner(System.in);
 
         int n = 0;
@@ -65,16 +38,16 @@ public class DAPP01Practica01 {
                 n = scan.nextInt();
                 switch (n) {
                     case 1:
-                        create(con);
+                        create();
                         break;
                     case 2:
-                        read(con);
+                        read();
                         break;
                     case 3:
-                        update(con);
+                        update();
                         break;
                     case 4:
-                        delete(con);
+                        delete();
                         break;
                     default:
                         break;
@@ -88,7 +61,6 @@ public class DAPP01Practica01 {
     }
 
     public static Empleado employe() {
-
         Scanner scan = new Scanner(System.in);
         Empleado empleadotemp = new Empleado();
         System.out.println("Ingresa los datos empleado: \n");
@@ -97,160 +69,83 @@ public class DAPP01Practica01 {
         System.out.println("Ingresa la direccion: ");
         empleadotemp.setDireccion(scan.next());
         System.out.println("Ingresa el telefono: ");
-        empleadotemp.setTelefono(scan.nextInt());
+        empleadotemp.setTelefono(scan.next());
         return empleadotemp;
 
     }
 
-    public static Empleado getEmploye(Connection con, int id) {
-        Statement st = null;
-        ResultSet result;
+    public static Empleado getEmploye(int id) {
         Empleado empleadotemp = new Empleado();
+        DAOEmpleado daoempleado = new DAOEmpleado();
         try {
-            st = con.createStatement();
-            String sql = "SELECT * FROM empleadotemporal WHERE id=" + id;
-
-            result = st.executeQuery(sql);
-            while (result.next()) {
-                empleadotemp.setNombre(result.getString("nombre"));
-                empleadotemp.setDireccion(result.getString("direccion"));
-                empleadotemp.setTelefono(result.getInt("telefono"));
-            }
+            empleadotemp = daoempleado.buscarId(id);
             System.out.println("Nombre: " + empleadotemp.getNombre() + ", Dirección: " + empleadotemp.getDireccion() + ", Teléfono: " + empleadotemp.getTelefono());
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        } catch (Exception ex) {
+            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, null, ex);
         }
         return empleadotemp;
     }
 
-    public static void create(Connection con) {
-        Statement st = null;
+    public static void create() {
         try {
-
-            Empleado empleadotemp;
-            empleadotemp = employe();
-
-            st = con.createStatement();
-            String sql = "INSERT INTO empleadotemporal (nombre, direccion, telefono) VALUES ('" + empleadotemp.getNombre() + "', '" + empleadotemp.getDireccion() + "', '" + empleadotemp.getTelefono() + "')";
-            st.execute(sql);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-
-            try {
-
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Empleado empleadotemp = employe();
+            DAOEmpleado daoempleado = new DAOEmpleado();
+            daoempleado.guardar(empleadotemp);
+        } catch (Exception ex) {
+            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, null, ex);
         }
 
     }
 
-    public static void read(Connection con) {
+    public static void read() {
 
-        Statement st = null;
-        ResultSet result;
         try {
             System.out.println("Los empleados son: \n");
-            st = con.createStatement();
-            String sql = "SELECT * FROM empleadotemporal";
-            result = st.executeQuery(sql);
-            int id = 0;
 
-            Empleado empleadotemp = new Empleado();
-            while (result.next()) {
-
-                empleadotemp.setNombre(result.getString("nombre"));
-                empleadotemp.setDireccion(result.getString("direccion"));
-                empleadotemp.setTelefono(result.getInt("telefono"));
-                id = id + 1;
-                String formattedId = String.format("%-5s", id);
+            DAOEmpleado daoempleado = new DAOEmpleado();
+            List<Empleado> empleados = daoempleado.buscarAll();
+            for (int i=empleados.size()-1; i >= 0; i--) {
+                Empleado empleadotemp = empleados.get(i);
+                String formattedId = String.format("%-5s", empleadotemp.getId());
                 String formattedNombre = String.format("%-12s", empleadotemp.getNombre());
                 String formattedDireccion = String.format("%-15s", empleadotemp.getDireccion());
-                String formattedTelefono = String.format("%-10d", empleadotemp.getTelefono());
+                String formattedTelefono = String.format("%-10s", empleadotemp.getTelefono());
                 System.out.println("| " + formattedId + "| " + formattedNombre + " | " + formattedDireccion + " | " + formattedTelefono + " |");
-
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        } catch (Exception ex) {
+            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, null, ex);
 
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
-    public static void update(Connection con) {
-
+    public static void update() {
         Scanner scan = new Scanner(System.in);
-        Statement st = null;
         try {
-            read(con);
+            read();
             System.out.print("\n Ingresa el ID del empleado a actualizar:");
             int id = scan.nextInt();
-            getEmploye(con, id);
+            getEmploye(id);
             Empleado empleadonew = employe();
-
-            st = con.createStatement();
-            String sql = "UPDATE empleadotemporal SET nombre = '" + empleadonew.getNombre() + "', direccion = '" + empleadonew.getDireccion() + "', telefono = " + empleadonew.getTelefono() + " WHERE id = " + id + "";
-
-            st.execute(sql);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            DAOEmpleado daoempleado = new DAOEmpleado();
+            daoempleado.modificar(empleadonew, id);
+        } catch (Exception ex) {
+            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, null, ex);
         }
+
     }
 
-    public static void delete(Connection con) {
+    public static void delete() {
         Scanner scan = new Scanner(System.in);
-        Statement st = null;
         try {
-            read(con);
+            read();
             System.out.print("\n Ingresa el ID del empleado a eliminar:");
             int id = scan.nextInt();
-            getEmploye(con, id);
-            st = con.createStatement();
-            String sql = "Delete FROMT empleadotemporal WHERE id = " + id + "";
-
-            st.execute(sql);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            getEmploye(id);
+            DAOEmpleado daoempleado = new DAOEmpleado();
+            daoempleado.eliminar(id);
+        } catch (Exception ex) {
+            Logger.getLogger(DAPP01Practica01.class
+                    .getName()).log(Level.INFO, null, ex);
         }
     }
 
