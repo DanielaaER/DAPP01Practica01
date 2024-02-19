@@ -19,10 +19,16 @@ import java.util.logging.Logger;
  *
  * @author Danielaa
  */
-public class DAOEmpleado {
+public class DAOEmpleado implements IDAO{
+    
+    private final Conexion databaseConnection;
+    public DAOEmpleado() {
+        this.databaseConnection = Conexion.getInstance();
+    }
 
+    @Override
     public boolean guardar(Empleado empleado) {
-        Conexion con = Conexion.getInstance();
+        Conexion con = databaseConnection;
         PreparedStatement pstm = null;
         try {
             String sql = "INSERT INTO empleadotemporal (nombre, direccion, telefono) VALUES (?,?,?)";
@@ -53,8 +59,9 @@ public class DAOEmpleado {
         return true;
     }
 
+    @Override
     public boolean eliminar(int id) {
-        Conexion con = Conexion.getInstance();
+        Conexion con = databaseConnection;
         PreparedStatement pstm = null;
         try {
             String sql = "Delete FROM empleadotemporal WHERE id = ?";
@@ -75,8 +82,9 @@ public class DAOEmpleado {
         return true;
     }
 
+    @Override
     public boolean modificar(Empleado empleado, int id) {
-        Conexion con = Conexion.getInstance();
+        Conexion con = databaseConnection;
         PreparedStatement pstm = null;
         try {
             String sql = "UPDATE empleadotemporal SET nombre = ?, direccion = ?, telefono = ? WHERE id = ?";
@@ -101,7 +109,7 @@ public class DAOEmpleado {
     }
 
     public Empleado buscarId(int id) {
-        Conexion con = Conexion.getInstance();
+        Conexion con = databaseConnection;
         PreparedStatement pstm = null;
         try {
             String sql = "SELECT * FROM empleadotemporal WHERE id=?";
@@ -132,9 +140,10 @@ public class DAOEmpleado {
         }
     }
 
+    @Override
     public List<Empleado> buscarAll() {
         ResultSet result;
-        Conexion con = Conexion.getInstance();
+        Conexion con = databaseConnection;
         Statement st = null;
         try {
             st = con.getConnection().createStatement();
