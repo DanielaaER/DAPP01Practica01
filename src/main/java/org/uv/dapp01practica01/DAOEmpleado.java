@@ -22,81 +22,49 @@ import java.util.logging.Logger;
 public class DAOEmpleado {
 
     public boolean guardar(Empleado empleado) {
-
-        Connection con = null;
+        Conexion con = Conexion.getInstance();
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
-
             String sql = "INSERT INTO empleadotemporal (nombre, direccion, telefono) VALUES (?,?,?)";
-
-            pstm = con.prepareStatement(sql);
+            pstm = con.getConnection().prepareStatement(sql);
             pstm.setString(1, empleado.getNombre());
-
             pstm.setString(2, empleado.getDireccion());
             pstm.setString(3, empleado.getTelefono());
             pstm.execute();
-
         } catch (SQLException ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-
             try {
-
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
-
                 if (pstm != null) {
                     pstm.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    if (pstm != null) {
+                        pstm.close();
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
-
         return true;
     }
 
     public boolean eliminar(int id) {
-
-        Connection con = null;
+        Conexion con = Conexion.getInstance();
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
             String sql = "Delete FROM empleadotemporal WHERE id = ?";
-
-            pstm = con.prepareStatement(sql);
-
+            pstm = con.getConnection().prepareStatement(sql);
             pstm.setInt(1, id);
             pstm.execute();
-
         } catch (SQLException ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-
             try {
-
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
-
                 if (pstm != null) {
                     pstm.close();
                 }
@@ -104,44 +72,24 @@ public class DAOEmpleado {
                 Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
         return true;
     }
 
     public boolean modificar(Empleado empleado, int id) {
-
-        Connection con = null;
+        Conexion con = Conexion.getInstance();
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
             String sql = "UPDATE empleadotemporal SET nombre = ?, direccion = ?, telefono = ? WHERE id = ?";
-
-            pstm = con.prepareStatement(sql);
+            pstm = con.getConnection().prepareStatement(sql);
             pstm.setString(1, empleado.getNombre());
-
             pstm.setString(2, empleado.getDireccion());
             pstm.setString(3, empleado.getTelefono());
             pstm.setInt(4, id);
             pstm.execute();
-
         } catch (SQLException ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-
             try {
-
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
-
                 if (pstm != null) {
                     pstm.close();
                 }
@@ -149,80 +97,50 @@ public class DAOEmpleado {
                 Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
         return true;
     }
 
     public Empleado buscarId(int id) {
-
-        Connection con = null;
+        Conexion con = Conexion.getInstance();
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
-
             String sql = "SELECT * FROM empleadotemporal WHERE id=?";
-
-            pstm = con.prepareStatement(sql);
+            pstm = con.getConnection().prepareStatement(sql);
             pstm.setInt(1, id);
-
             ResultSet result;
             result = pstm.executeQuery();
-
             if (result.next()) {
                 Empleado empleado = new Empleado();
-
                 empleado.setId(result.getInt("id"));
                 empleado.setNombre(result.getString("nombre"));
                 empleado.setDireccion(result.getString("direccion"));
                 empleado.setTelefono(result.getString("telefono"));
                 return empleado;
             }
-
             return null;
         } catch (SQLException ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
-
             try {
-
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
-
                 if (pstm != null) {
                     pstm.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
-
     }
 
     public List<Empleado> buscarAll() {
         ResultSet result;
-        Connection con = null;
+        Conexion con = Conexion.getInstance();
         Statement st = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
-            st = con.createStatement();
+            st = con.getConnection().createStatement();
             String sql = "SELECT * FROM empleadotemporal";
             result = st.executeQuery(sql);
             List<Empleado> empleados = new ArrayList<>();
-
             while (result.next()) {
                 Empleado empleado = new Empleado();
                 empleado.setId(result.getInt("id"));
@@ -236,13 +154,6 @@ public class DAOEmpleado {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            }
             try {
                 if (st != null) {
                     st.close();
