@@ -19,17 +19,21 @@ import java.util.logging.Logger;
  *
  * @author Danielaa
  */
-public class DAOEmpleado {
+public class DAOEmpleado implements IDAO{
+    
+    private DatabaseConnection databaseConnection;
+    
+    public DAOEmpleado() {
+        this.databaseConnection = DatabaseConnection.getInstance();
+    }
 
+    @Override
     public boolean guardar(Empleado empleado) {
 
         Connection con = null;
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
+            con = databaseConnection.getConnection();
 
             String sql = "INSERT INTO empleadotemporal (nombre, direccion, telefono) VALUES (?,?,?)";
 
@@ -66,15 +70,13 @@ public class DAOEmpleado {
         return true;
     }
 
+    @Override
     public boolean eliminar(int id) {
 
         Connection con = null;
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
+            con = databaseConnection.getConnection();
             String sql = "Delete FROM empleadotemporal WHERE id = ?";
 
             pstm = con.prepareStatement(sql);
@@ -108,15 +110,13 @@ public class DAOEmpleado {
         return true;
     }
 
+    @Override
     public boolean modificar(Empleado empleado, int id) {
 
         Connection con = null;
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
+            con = databaseConnection.getConnection();
             String sql = "UPDATE empleadotemporal SET nombre = ?, direccion = ?, telefono = ? WHERE id = ?";
 
             pstm = con.prepareStatement(sql);
@@ -158,10 +158,7 @@ public class DAOEmpleado {
         Connection con = null;
         PreparedStatement pstm = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
+            con = databaseConnection.getConnection();
 
             String sql = "SELECT * FROM empleadotemporal WHERE id=?";
 
@@ -209,15 +206,13 @@ public class DAOEmpleado {
 
     }
 
+    @Override
     public List<Empleado> buscarAll() {
         ResultSet result;
         Connection con = null;
         Statement st = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/ejemplo";
-            String usr = "postgres";
-            String pwd = "boli";
-            con = DriverManager.getConnection(url, usr, pwd);
+            con = databaseConnection.getConnection();
             st = con.createStatement();
             String sql = "SELECT * FROM empleadotemporal";
             result = st.executeQuery(sql);
