@@ -57,9 +57,9 @@ public class DAPP01Practica01 {
         } while ((n < 1 || n < 5) || step);
     }
 
-    public static Empleado employe() {
+    public static PojoEmpleado employe() {
         Scanner scan = new Scanner(System.in);
-        Empleado empleadotemp = new Empleado();
+        PojoEmpleado empleadotemp = new PojoEmpleado();
         System.out.println("Ingresa los datos empleado: \n");
         System.out.println("Ingresa el nombre: ");
         empleadotemp.setNombre(scan.next());
@@ -71,8 +71,8 @@ public class DAPP01Practica01 {
 
     }
 
-    public static Empleado getEmploye(int id) {
-        Empleado empleadotemp = new Empleado();
+    public static PojoEmpleado getEmploye(int id) {
+        PojoEmpleado empleadotemp = new PojoEmpleado();
         DAOEmpleado daoempleado = new DAOEmpleado();
         try {
             empleadotemp = daoempleado.buscarId(id);
@@ -85,7 +85,7 @@ public class DAPP01Practica01 {
 
     public static void create() {
         try {
-            Empleado empleadotemp = employe();
+            PojoEmpleado empleadotemp = employe();
             DAOEmpleado daoempleado = new DAOEmpleado();
             daoempleado.guardar(empleadotemp);
         } catch (Exception ex) {
@@ -100,9 +100,9 @@ public class DAPP01Practica01 {
             System.out.println("Los empleados son: \n");
 
             DAOEmpleado daoempleado = new DAOEmpleado();
-            List<Empleado> empleados = daoempleado.buscarAll();
+            List<PojoEmpleado> empleados = daoempleado.buscarAll();
             for (int i=empleados.size()-1; i >= 0; i--) {
-                Empleado empleadotemp = empleados.get(i);
+                PojoEmpleado empleadotemp = empleados.get(i);
                 String formattedId = String.format("%-5s", empleadotemp.getId());
                 String formattedNombre = String.format("%-12s", empleadotemp.getNombre());
                 String formattedDireccion = String.format("%-15s", empleadotemp.getDireccion());
@@ -122,7 +122,7 @@ public class DAPP01Practica01 {
             System.out.print("\n Ingresa el ID del empleado a actualizar:");
             int id = scan.nextInt();
             getEmploye(id);
-            Empleado empleadonew = employe();
+            PojoEmpleado empleadonew = employe();
             DAOEmpleado daoempleado = new DAOEmpleado();
             daoempleado.modificar(empleadonew, id);
         } catch (Exception ex) {

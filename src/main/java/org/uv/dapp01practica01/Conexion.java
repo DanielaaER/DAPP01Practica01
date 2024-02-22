@@ -6,7 +6,9 @@ package org.uv.dapp01practica01;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +42,32 @@ public class Conexion {
         }
         return cx;
     }
+    
+    public boolean execute(String sql){
+        try {
+            Statement st = con.createStatement();
+            st.execute(sql);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public boolean execute(TransaccionDB tra){
+        return tra.execute(con);
+    }
+    
+    public ResultSet consultar(String sql) {
+    try {
+        Statement st = con.createStatement();
+        return st.executeQuery(sql);
+    } catch (SQLException ex) {
+        Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        return null;
+    }
+}
+
 
     Connection getConnection() {
         return con;
@@ -54,5 +82,4 @@ public class Conexion {
             }
         }
     }
-
 }

@@ -8,20 +8,20 @@ package org.uv.dapp01practica01;
  *
  * @author Danielaa
  */
-public class Empleado {
+public class PojoEmpleado {
 
     private int id;
     private String nombre;
     private String direccion;
     private String telefono;
 
-    public Empleado(String nombre, String direccion, String telefono) {
+    public PojoEmpleado(String nombre, String direccion, String telefono) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
     }
 
-    public Empleado() {
+    public PojoEmpleado() {
 
     }
 

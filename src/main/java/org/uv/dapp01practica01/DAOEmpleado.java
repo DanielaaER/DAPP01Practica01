@@ -1,11 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package org.uv.dapp01practica01;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Danielaa
- */
-public class DAOEmpleado implements IDAO{
+public class DAOEmpleado implements IDAO<PojoEmpleado, Integer>{
     
     private final Conexion databaseConnection;
     public DAOEmpleado() {
@@ -27,88 +17,75 @@ public class DAOEmpleado implements IDAO{
     }
 
     @Override
-    public boolean guardar(Empleado empleado) {
-        Conexion con = databaseConnection;
-        PreparedStatement pstm = null;
-        try {
-            String sql = "INSERT INTO empleadotemporal (nombre, direccion, telefono) VALUES (?,?,?)";
-            pstm = con.getConnection().prepareStatement(sql);
-            pstm.setString(1, empleado.getNombre());
-            pstm.setString(2, empleado.getDireccion());
-            pstm.setString(3, empleado.getTelefono());
-            pstm.execute();
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
+    public boolean guardar(PojoEmpleado empleado) {
+        Conexion con = Conexion.getInstance();
+        TransaccionDB tra = new TransaccionDB<PojoEmpleado>(empleado){
+            @Override
+            public boolean execute(Connection con) {
                 try {
-                    if (pstm != null) {
-                        pstm.close();
-                    }
+                    String sql = "insert into empleadostemporal (nombre,direccion,telefono) values (?,?,?)";
+                    PreparedStatement pstm = con.prepareStatement(sql);
+                    pstm.setString(1, empleado.getNombre());
+                    pstm.setString(2, empleado.getDireccion());
+                    pstm.setString(2,empleado.getTelefono());
+                    pstm.execute();
+                    return true;
                 } catch (SQLException ex) {
-                    Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
                 }
-            }
-        }
-        return true;
+            }   
+        };
+        return con.execute(tra);
     }
 
     @Override
-    public boolean eliminar(int id) {
-        Conexion con = databaseConnection;
-        PreparedStatement pstm = null;
-        try {
-            String sql = "Delete FROM empleadotemporal WHERE id = ?";
-            pstm = con.getConnection().prepareStatement(sql);
-            pstm.setInt(1, id);
-            pstm.execute();
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (pstm != null) {
-                    pstm.close();
+    public boolean eliminar(Integer id) {
+        Conexion con = Conexion.getInstance();
+        TransaccionDB tra = new TransaccionDB<Integer>(id) {
+            @Override
+            public boolean execute(Connection con) {
+                try {
+                    String sql = "DELETE FROM empleadotemporal WHERE id = ?";
+                    PreparedStatement pstm = con.prepareStatement(sql);
+                    pstm.setInt(1, pojo);
+                    pstm.execute();
+                    return true;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        return true;
+        };
+        return con.execute(tra);
     }
 
     @Override
-    public boolean modificar(Empleado empleado, int id) {
+    public boolean modificar(PojoEmpleado empleado, Integer id) {
         Conexion con = databaseConnection;
-        PreparedStatement pstm = null;
-        try {
-            String sql = "UPDATE empleadotemporal SET nombre = ?, direccion = ?, telefono = ? WHERE id = ?";
-            pstm = con.getConnection().prepareStatement(sql);
-            pstm.setString(1, empleado.getNombre());
-            pstm.setString(2, empleado.getDireccion());
-            pstm.setString(3, empleado.getTelefono());
-            pstm.setInt(4, id);
-            pstm.execute();
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (pstm != null) {
-                    pstm.close();
+        TransaccionDB tra = new TransaccionDB<PojoEmpleado>(empleado) {
+            @Override
+            public boolean execute(Connection con) {
+                try {
+                    String sql = "UPDATE empleadotemporal SET nombre = ?, direccion = ?, telefono = ? WHERE id = ?";
+                    PreparedStatement pstm = con.prepareStatement(sql);
+                    pstm.setString(1, empleado.getNombre());
+                    pstm.setString(2, empleado.getDireccion());
+                    pstm.setString(3, empleado.getTelefono());
+                    pstm.setInt(4, id);
+                    pstm.execute();
+                    return true;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        return true;
+        };
+        return con.execute(tra);
     }
 
-    public Empleado buscarId(int id) {
+    @Override
+    public PojoEmpleado buscarById(Integer id) {
         Conexion con = databaseConnection;
         PreparedStatement pstm = null;
         try {
@@ -118,7 +95,7 @@ public class DAOEmpleado implements IDAO{
             ResultSet result;
             result = pstm.executeQuery();
             if (result.next()) {
-                Empleado empleado = new Empleado();
+                PojoEmpleado empleado = new PojoEmpleado();
                 empleado.setId(result.getInt("id"));
                 empleado.setNombre(result.getString("nombre"));
                 empleado.setDireccion(result.getString("direccion"));
@@ -141,7 +118,7 @@ public class DAOEmpleado implements IDAO{
     }
 
     @Override
-    public List<Empleado> buscarAll() {
+    public List<PojoEmpleado> buscarAll() {
         ResultSet result;
         Conexion con = databaseConnection;
         Statement st = null;
@@ -149,9 +126,9 @@ public class DAOEmpleado implements IDAO{
             st = con.getConnection().createStatement();
             String sql = "SELECT * FROM empleadotemporal";
             result = st.executeQuery(sql);
-            List<Empleado> empleados = new ArrayList<>();
+            List<PojoEmpleado> empleados = new ArrayList<>();
             while (result.next()) {
-                Empleado empleado = new Empleado();
+                PojoEmpleado empleado = new PojoEmpleado();
                 empleado.setId(result.getInt("id"));
                 empleado.setNombre(result.getString("nombre"));
                 empleado.setDireccion(result.getString("direccion"));
@@ -172,4 +149,5 @@ public class DAOEmpleado implements IDAO{
             }
         }
     }
+
 }
