@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,8 +43,8 @@ public class Conexion {
         }
         return cx;
     }
-    
-    public boolean execute(String sql){
+
+    public boolean execute(String sql) {
         try {
             Statement st = con.createStatement();
             st.execute(sql);
@@ -53,21 +54,25 @@ public class Conexion {
             return false;
         }
     }
-    
-    public boolean execute(TransaccionDB tra){
+
+    public boolean execute(TransaccionDB tra) {
         return tra.execute(con);
     }
-    
-    public ResultSet consultar(String sql) {
-    try {
-        Statement st = con.createStatement();
-        return st.executeQuery(sql);
-    } catch (SQLException ex) {
-        Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
-        return null;
-    }
-}
 
+    public ResultSet consultar(String sql) {
+        try {
+            Statement st = con.createStatement();
+            return st.executeQuery(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public List select(SelectionDB select) {
+        return select.buscar(con);
+
+    }
 
     Connection getConnection() {
         return con;

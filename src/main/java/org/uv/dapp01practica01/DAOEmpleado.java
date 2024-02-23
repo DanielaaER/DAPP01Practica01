@@ -11,13 +11,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
-
+    
     private final Conexion databaseConnection;
-
+    
     public DAOEmpleado() {
         this.databaseConnection = Conexion.getInstance();
     }
-
+    
     @Override
     public boolean guardar(PojoEmpleado empleado) {
         Conexion con = Conexion.getInstance();
@@ -36,11 +36,12 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
                     Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                     return false;
                 }
+                
             }
         };
         return con.execute(tra);
     }
-
+    
     @Override
     public boolean eliminar(Integer id) {
         Conexion con = Conexion.getInstance();
@@ -61,7 +62,7 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
         };
         return con.execute(tra);
     }
-
+    
     @Override
     public boolean modificar(PojoEmpleado empleado, Integer id) {
         Conexion con = databaseConnection;
@@ -85,42 +86,41 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
         };
         return con.execute(tra);
     }
-
+    
     @Override
     public PojoEmpleado buscarById(Integer id) {
         Conexion con = databaseConnection;
-        PojoEmpleado empleado = new PojoEmpleado();
-        TransaccionDB tra = new TransaccionDB<PojoEmpleado>(empleado) {
+        SelectionDB select = new SelectionDB() {
             @Override
-            public boolean execute(Connection con) {
+            public List buscar(Connection con) {
                 try {
                     String sql = "SELECT * FROM empleadotemporal WHERE id = ?";
                     PreparedStatement pstm = con.prepareStatement(sql);
-
-                    pstm.setInt(1, id);
-                    ResultSet result;
-                    result = pstm.executeQuery();
-
+                    pstm.setObject(1, id);
+                    ResultSet result = pstm.executeQuery();
+                    List lst = new ArrayList<PojoEmpleado>();
+                    PojoEmpleado p = new PojoEmpleado();
                     if (result.next()) {
-                        empleado.setId(result.getInt("id"));
-                        empleado.setNombre(result.getString("nombre"));
-                        empleado.setDireccion(result.getString("direccion"));
-                        empleado.setTelefono(result.getString("telefono"));
+                        p.setId(result.getInt("id"));
+                        p.setNombre(result.getString("nombre"));
+                        p.setDireccion(result.getString("direccion"));
+                        p.setTelefono(result.getString("telefono"));
+                        lst.add(p);
                     }
-
-                    pstm.execute();
-                    return true;
+                    return lst;
                 } catch (SQLException ex) {
                     Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
+                    return null;
                 }
             }
+            
         };
-        con.execute(tra);
+        PojoEmpleado empleado = (PojoEmpleado) con.select(select).get(0);
+        
         return empleado;
-
+        
     }
-
+    
     @Override
     public List<PojoEmpleado> buscarAll() {
         List<PojoEmpleado> empleados = new ArrayList<>();
@@ -140,8 +140,10 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
                         empleados.add(empleado);
                     }
                     return true;
+                    
                 } catch (SQLException ex) {
-                    Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DAOEmpleado.class
+                            .getName()).log(Level.SEVERE, null, ex);
                     return false;
                 }
             }
