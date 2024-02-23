@@ -75,7 +75,7 @@ public class DAPP01Practica01 {
         PojoEmpleado empleadotemp = new PojoEmpleado();
         DAOEmpleado daoempleado = new DAOEmpleado();
         try {
-            empleadotemp = daoempleado.buscarId(id);
+            empleadotemp = daoempleado.buscarById(id);
             System.out.println("Nombre: " + empleadotemp.getNombre() + ", Dirección: " + empleadotemp.getDireccion() + ", Teléfono: " + empleadotemp.getTelefono());
         } catch (Exception ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, null, ex);
