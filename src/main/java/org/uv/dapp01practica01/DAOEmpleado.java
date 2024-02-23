@@ -119,35 +119,30 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer>{
 
     @Override
     public List<PojoEmpleado> buscarAll() {
-        ResultSet result;
-        Conexion con = databaseConnection;
-        Statement st = null;
-        try {
-            st = con.getConnection().createStatement();
-            String sql = "SELECT * FROM empleadotemporal";
-            result = st.executeQuery(sql);
-            List<PojoEmpleado> empleados = new ArrayList<>();
-            while (result.next()) {
-                PojoEmpleado empleado = new PojoEmpleado();
-                empleado.setId(result.getInt("id"));
-                empleado.setNombre(result.getString("nombre"));
-                empleado.setDireccion(result.getString("direccion"));
-                empleado.setTelefono(result.getString("telefono"));
-                empleados.add(empleado);
-            }
-            return empleados;
-        } catch (SQLException ex) {
-            Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        } finally {
-            try {
-                if (st != null) {
-                    st.close();
+        List<PojoEmpleado> empleados = new ArrayList<>();
+        TransaccionDB tra = new TransaccionDB<List<PojoEmpleado>>(empleados) {
+            @Override
+            public boolean execute(Connection con) {
+                try {
+                    String sql = "SELECT * FROM empleadotemporal";
+                    Statement st = con.createStatement();
+                    ResultSet result = st.executeQuery(sql);
+                    while (result.next()) {
+                        PojoEmpleado empleado = new PojoEmpleado();
+                        empleado.setId(result.getInt("id"));
+                        empleado.setNombre(result.getString("nombre"));
+                        empleado.setDireccion(result.getString("direccion"));
+                        empleado.setTelefono(result.getString("telefono"));
+                        empleados.add(empleado);
+                    }
+                    return true;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        };
+        databaseConnection.execute(tra);
+        return empleados;
     }
-
 }
