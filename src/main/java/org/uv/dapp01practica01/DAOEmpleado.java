@@ -131,9 +131,9 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
                     String sql = "SELECT * FROM empleadotemporal";
                     PreparedStatement pstm = con.prepareStatement(sql);
                     ResultSet result = pstm.executeQuery();
-                    List lst = new ArrayList<PojoEmpleado>();
-                    PojoEmpleado p = new PojoEmpleado();
+                    List<PojoEmpleado> lst = new ArrayList<>();
                     while (result.next()) {
+                        PojoEmpleado p = new PojoEmpleado();
                         p.setId(result.getInt("id"));
                         p.setNombre(result.getString("nombre"));
                         p.setDireccion(result.getString("direccion"));
@@ -149,7 +149,8 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
 
         };
 
-        List<PojoEmpleado> empleados = (List<PojoEmpleado>) (PojoEmpleado) con.select(select);
+        //List<PojoEmpleado> empleados = (List<PojoEmpleado>) (PojoEmpleado) con.select(select);
+        List<PojoEmpleado> empleados = con.select(select);
         return empleados;
     }
 }
