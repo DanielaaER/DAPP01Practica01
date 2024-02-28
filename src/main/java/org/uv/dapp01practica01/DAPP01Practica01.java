@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -16,6 +19,7 @@ public class DAPP01Practica01 {
 
     public static void main(String[] args) {
         try {
+
             menu();
         } catch (Exception ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.SEVERE, "Error al ejecutar el programa", ex);
@@ -101,7 +105,7 @@ public class DAPP01Practica01 {
 
             DAOEmpleado daoempleado = new DAOEmpleado();
             List<PojoEmpleado> empleados = daoempleado.buscarAll();
-            for (int i=empleados.size()-1; i >= 0; i--) {
+            for (int i = empleados.size() - 1; i >= 0; i--) {
                 PojoEmpleado empleadotemp = empleados.get(i);
                 String formattedId = String.format("%-5s", empleadotemp.getId());
                 String formattedNombre = String.format("%-12s", empleadotemp.getNombre());
@@ -124,7 +128,7 @@ public class DAPP01Practica01 {
             getEmploye(id);
             PojoEmpleado empleadonew = employe();
             DAOEmpleado daoempleado = new DAOEmpleado();
-            daoempleado.modificar(empleadonew, id);
+            daoempleado.modificar(empleadonew);
         } catch (Exception ex) {
             Logger.getLogger(DAPP01Practica01.class.getName()).log(Level.INFO, null, ex);
         }
