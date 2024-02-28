@@ -42,7 +42,6 @@ public class DAOEmpleadoOld implements IDAO<PojoEmpleado, Integer> {
         return con.execute(tra);
     }
 
-    @Override
     public boolean eliminar(Integer id) {
         Conexion con = Conexion.getInstance();
         TransaccionDB tra = new TransaccionDB<Integer>(id) {
@@ -152,5 +151,10 @@ public class DAOEmpleadoOld implements IDAO<PojoEmpleado, Integer> {
         //List<PojoEmpleado> empleados = (List<PojoEmpleado>) (PojoEmpleado) con.select(select);
         List<PojoEmpleado> empleados = con.select(select);
         return empleados;
+    }
+
+    @Override
+    public boolean eliminar(PojoEmpleado pojo) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

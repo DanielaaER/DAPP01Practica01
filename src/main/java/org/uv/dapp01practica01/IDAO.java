@@ -10,7 +10,7 @@ public interface IDAO<T, ID> {
 
     public boolean guardar(T pojo);
 
-    public boolean eliminar(ID id);
+    public boolean eliminar(T pojo);
 
     public boolean modificar(T pojo);
 }

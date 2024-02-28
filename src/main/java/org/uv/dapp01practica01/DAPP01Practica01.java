@@ -141,9 +141,9 @@ public class DAPP01Practica01 {
             read();
             System.out.print("\n Ingresa el ID del empleado a eliminar:");
             int id = scan.nextInt();
-            getEmploye(id);
+            PojoEmpleado empleado = getEmploye(id);
             DAOEmpleado daoempleado = new DAOEmpleado();
-            daoempleado.eliminar(id);
+            daoempleado.eliminar(empleado);
         } catch (Exception ex) {
             Logger.getLogger(DAPP01Practica01.class
                     .getName()).log(Level.INFO, null, ex);

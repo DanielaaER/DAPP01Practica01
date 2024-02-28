@@ -24,100 +24,64 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
 
     @Override
     public boolean guardar(PojoEmpleado empleado) {
-        Conexion con = Conexion.getInstance();
-        TransaccionDB tra = new TransaccionDB<PojoEmpleado>(empleado) {
-            @Override
-            public boolean execute(Connection con) {
-                SessionFactory sf = HibernateUtil.getSessionFactory();
-                Session session = sf.getCurrentSession();
-                Transaction transaction = session.beginTransaction();
-                session.save(empleado);
-                transaction.commit();
-                System.out.println("Se guardo con el id " + empleado.getId());
-                return true;
-            }
-        };
-        return con.execute(tra);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(empleado);
+        transaction.commit();
+        System.out.println("Se guardo con el id " + empleado.getId());
+        return true;
     }
 
     @Override
-    public boolean eliminar(Integer id) {
-        Conexion con = Conexion.getInstance();
-        TransaccionDB tra = new TransaccionDB<Integer>(id) {
-            @Override
-            public boolean execute(Connection con) {
+    public boolean eliminar(PojoEmpleado empleado) {
 
-                SessionFactory sf = HibernateUtil.getSessionFactory();
-                Session session = sf.getCurrentSession();
-                Transaction transaction = session.beginTransaction();
-                session.delete(id);
-                transaction.commit();
-                return true;
-            }
-        };
-        return con.execute(tra);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(empleado);
+        transaction.commit();
+        return true;
     }
 
     @Override
     public boolean modificar(PojoEmpleado empleado) {
-        Conexion con = databaseConnection;
-        TransaccionDB tra = new TransaccionDB<PojoEmpleado>(empleado) {
-            @Override
-            public boolean execute(Connection con) {
-                SessionFactory sf = HibernateUtil.getSessionFactory();
-                Session session = sf.getCurrentSession();
-                Transaction transaction = session.beginTransaction();
-                session.update(empleado);
-                transaction.commit();
-                return true;
-
-            }
-        };
-        return con.execute(tra);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        PojoEmpleado existingEmpleado = session.get(PojoEmpleado.class, empleado.getId());
+        if (existingEmpleado != null) {
+            existingEmpleado.setDireccion(empleado.getDireccion());
+            existingEmpleado.setNombre(empleado.getNombre());
+            existingEmpleado.setTelefono(empleado.getTelefono());
+            session.update(existingEmpleado);
+            transaction.commit();
+            return true;
+        } else {
+            // Handle case where the entity doesn't exist
+            transaction.rollback();
+            return false;
+        }
     }
 
     @Override
     public PojoEmpleado buscarById(Integer id) {
-        Conexion con = databaseConnection;
-        SelectionDB select = new SelectionDB() {
-            @Override
-            public List buscar(Connection con) {
-                SessionFactory sf = HibernateUtil.getSessionFactory();
-                Session session = sf.getCurrentSession();
-                Transaction transaction = session.beginTransaction();
-                PojoEmpleado result = session.get(PojoEmpleado.class, id);
-                transaction.commit();
-                List<PojoEmpleado> lst = new ArrayList<>();
-                lst.add(result);
-                return lst;
-            }
-        };
-        PojoEmpleado empleado = (PojoEmpleado) con.select(select).get(0);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        PojoEmpleado empleado = session.get(PojoEmpleado.class, id);
+        transaction.commit();
         return empleado;
 
     }
 
     @Override
     public List<PojoEmpleado> buscarAll() {
-
-        Conexion con = databaseConnection;
-        SelectionDB select = new SelectionDB() {
-            @Override
-            public List buscar(Connection con) {
-                SessionFactory sf = HibernateUtil.getSessionFactory();
-                Session session = sf.getCurrentSession();
-                Transaction transaction = session.beginTransaction();;
-                Query query = session.createQuery("FROM PojoEmpleado");
-                List<PojoEmpleado> lst = null;
-                lst = query.list();
-                transaction.commit();
-                return lst;
-            }
-
-        };
-
-        //List<PojoEmpleado> empleados = (List<PojoEmpleado>) (PojoEmpleado) con.select(select);
-        List<PojoEmpleado> empleados = con.select(select);
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        List<PojoEmpleado> empleados = session.createQuery("FROM empleadotemporal").list();
+        transaction.commit();
         return empleados;
     }
 }
