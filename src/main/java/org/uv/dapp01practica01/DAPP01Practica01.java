@@ -3,6 +3,9 @@
  */
 package org.uv.dapp01practica01;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -19,6 +22,36 @@ public class DAPP01Practica01 {
 
     public static void main(String[] args) {
         try {
+
+            SessionFactory sf = HibernateUtil.getSessionFactory();
+            
+            Session session = sf.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            Venta venta = new Venta();
+            venta.setCliente("publico general");
+            venta.setFecha(new Date(new java.util.Date().getTime()));
+            venta.setTotal(100000);
+            
+            session.save(venta);
+            
+
+            List<DetalleVenta> lstDetalleVenta = new ArrayList<>();
+            for (int i = 0; i < 5;
+                    i++) {
+                DetalleVenta det = new DetalleVenta();
+                det.setPrecio(1000);
+                det.setCantidad(10);
+                det.setProducto("Producto "+ i);
+                det.setVenta(venta);
+                venta.getDetalleVenta().add(det);
+                session.save(det);
+                
+            }
+            venta.setDetalleVenta(lstDetalleVenta);
+            
+            
+            transaction.commit();
+            System.out.println("Se guardo con ID:" + venta.getId());
 
             menu();
         } catch (Exception ex) {
