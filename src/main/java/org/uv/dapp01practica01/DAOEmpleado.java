@@ -24,11 +24,11 @@ public class DAOEmpleado implements IDAO<PojoEmpleado, Integer> {
 
     @Override
     public boolean guardar(PojoEmpleado empleado) {
-//        SessionFactory sf = HibernateUtil.getSessionFactory();
-//        Session session = sf.getCurrentSession();
-//        Transaction transaction = session.beginTransaction();
-//        session.save(empleado);
-//        transaction.commit();
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(empleado);
+        transaction.commit();
         System.out.println("Se guardo con el id " + empleado.getId());
         return true;
     }

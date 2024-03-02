@@ -90,13 +90,6 @@ public class DetalleVenta implements Serializable{
         this.producto = producto;
     }
 
-    public long getIdventa() {
-        return idventa;
-    }
-
-    public void setIdventa(long idventa) {
-        this.idventa = idventa;
-    }
     
     
 }
