@@ -27,11 +27,11 @@ public class DAOVenta implements IDAO<Venta, Integer> {
         Session session = sf.getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.save(pojo);
-        
-        for (DetalleVenta det : pojo.getDetalleVenta() ){
-        session.save(det);
-    }
-        
+
+//        for (DetalleVenta det : pojo.getDetalleVenta()) {
+//            session.save(det);
+//        }
+
         transaction.commit();
         System.out.println("Se guardo con el id " + pojo.getId());
         return true;
