@@ -15,7 +15,7 @@ import javax.persistence.Id;
  *
  * @author Danielaa
  */
-@Entity(name = "empleadosuv")
+@Entity(name = "empleadotemporal")
 public class PojoEmpleado implements Serializable {
 
     @Id

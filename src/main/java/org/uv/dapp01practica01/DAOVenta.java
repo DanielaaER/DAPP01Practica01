@@ -14,7 +14,7 @@ import org.hibernate.Transaction;
  * @author Danielaa
  */
 public class DAOVenta implements IDAO<Venta, Integer> {
-    
+
     private final Conexion databaseConnection;
 
     public DAOVenta() {
@@ -23,19 +23,24 @@ public class DAOVenta implements IDAO<Venta, Integer> {
 
     @Override
     public boolean guardar(Venta pojo) {
-    SessionFactory sf = HibernateUtil.getSessionFactory();
+        SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.save(pojo);
+        
+        for (DetalleVenta det : pojo.getDetalleVenta() ){
+        session.save(det);
+    }
+        
         transaction.commit();
         System.out.println("Se guardo con el id " + pojo.getId());
-        return true;    
-    
+        return true;
+
     }
 
     @Override
     public boolean eliminar(Venta pojo) {
-    
+
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         Transaction transaction = session.beginTransaction();
@@ -46,7 +51,7 @@ public class DAOVenta implements IDAO<Venta, Integer> {
 
     @Override
     public boolean modificar(Venta pojo) {
-    SessionFactory sf = HibernateUtil.getSessionFactory();
+        SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Venta existingVenta = session.get(Venta.class, pojo.getId());
@@ -65,10 +70,9 @@ public class DAOVenta implements IDAO<Venta, Integer> {
         }
     }
 
-
     @Override
     public Venta buscarById(Integer id) {
-    
+
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         Transaction transaction = session.beginTransaction();
@@ -85,6 +89,6 @@ public class DAOVenta implements IDAO<Venta, Integer> {
         List<Venta> ventas = session.createQuery("FROM venta").list();
         transaction.commit();
         return ventas;
-    
+
     }
 }

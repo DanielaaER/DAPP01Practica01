@@ -5,6 +5,7 @@ org\uv\dapp01practica01\DAOEmpleadoOld$5.class
 org\uv\dapp01practica01\Venta.class
 org\uv\dapp01practica01\Conexion.class
 org\uv\dapp01practica01\DAOEmpleadoOld.class
+org\uv\dapp01practica01\DAOVenta.class
 org\uv\dapp01practica01\DAOEmpleadoOld$4.class
 org\uv\dapp01practica01\DAOEmpleadoOld$1.class
 org\uv\dapp01practica01\DetalleVenta.class
